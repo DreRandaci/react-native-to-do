@@ -6,9 +6,9 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity
- } from 'react-native';
-
+} from 'react-native';
 import Note from './Note';
+import NoteModal from './NoteModal';
 
 export default class Main extends React.Component {
 
@@ -23,7 +23,7 @@ export default class Main extends React.Component {
   render() {
 
     let notes = this.state.noteArray.map((val, key) => {
-      return <Note key={key} keyVal={key} val={val} deleteMethod={() => this.deleteNote(key)} />
+      return <Note key={key} keyVal={key} val={val} updateMethod={() => this.updateNote(key)} deleteMethod={() => this.deleteNote(key)} />
     })
 
     return (
@@ -35,7 +35,7 @@ export default class Main extends React.Component {
         <ScrollView style={styles.scrollContainer}>
         {notes}
         </ScrollView>
-
+        
         <View style={styles.footer}>
             <TextInput 
             style={styles.textInput} 
@@ -60,9 +60,7 @@ export default class Main extends React.Component {
     if (this.state.noteText) {
       var date = new Date();
       this.state.noteArray.push({
-        'date': date.getFullYear() + 
-        "/" + (date.getMonth() + 1) +
-        "/" + date.getDate(),
+        'date': (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), 
         'note': this.state.noteText
       });
       
@@ -74,6 +72,11 @@ export default class Main extends React.Component {
   deleteNote(ind) {
     this.state.noteArray.splice(ind, 1);
     this.setState({noteArray: this.state.noteArray});
+  }
+
+  updateNote(ind) {
+    // <NoteModal visible={true}/>
+    let note = this.state.noteArray[ind];
   }
 
 }
@@ -92,7 +95,8 @@ const styles = StyleSheet.create({
   headerText: {
       color: 'white',
       fontSize: 18,
-      padding: 26
+      padding: 26,
+      fontWeight: 'bold',
   },
   scrollContainer: {
     flex: 1,

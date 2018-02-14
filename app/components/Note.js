@@ -3,8 +3,10 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Touchable
  } from 'react-native';
+import NoteModal from './NoteModal';
 
 export default class Note extends React.Component {
   render() {
@@ -12,11 +14,14 @@ export default class Note extends React.Component {
 
       <View key={this.props.keyVal} style={styles.note}>
       
-        <Text style={styles.noteText}>{this.props.val.note}</Text>
-        <Text style={styles.noteText}>{this.props.val.date}</Text>
+        <TouchableOpacity onPress={this.props.updateMethod} style={styles.noteWrapper}>
+        <NoteModal />
+            <Text style={styles.noteText}>{this.props.val.note}</Text>
+            <Text style={styles.noteText}>{this.props.val.date}</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={this.props.deleteMethod} style={styles.noteDelete}>
-        <Text style={styles.noteDeleteText}>D</Text>
+            <Text style={styles.noteDeleteText}>D</Text>
         </TouchableOpacity>
 
       </View>
@@ -42,7 +47,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2980b9',
+        backgroundColor: '#ff0000',
         padding: 10,
         top: 10,
         bottom: 10,
