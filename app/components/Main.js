@@ -9,13 +9,14 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Note from './Note';
-import NoteModal from './NoteModal';
+import Modal from "react-native-modal";
 
 export default class Main extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      isModalVisible: false,
       noteArray: [],
       noteText: ''
     }
@@ -43,6 +44,24 @@ export default class Main extends React.Component {
         {notes}
         </ScrollView>
         
+
+
+
+        // WORKING HERE 
+        <Modal isVisible={this.state.isModalVisible}>
+          <View style={{ flex: 1 }}>
+            <Text>MODAL!!!!</Text>
+            <TouchableOpacity onPress={this.updateNote}>
+              <Text>Hide me!</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+
+
+
+
+
+
         <View style={styles.footer}>
             <TextInput 
             style={styles.textInput} 
@@ -54,9 +73,9 @@ export default class Main extends React.Component {
             </TextInput>
         </View>
       
-      <TouchableOpacity onPress={this.addNote.bind(this)} style={styles.addButton}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={this.addNote.bind(this)} style={styles.addButton}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
 
       </View>
     );
@@ -82,21 +101,36 @@ export default class Main extends React.Component {
   }
 
   updateNote(ind) {
-    Alert.alert(
-      'New Note',
-      'Add details',
-      [
-        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ],
-      { cancelable: false }
-    )
-    // <NoteModal visible={true}/>
     let note = this.state.noteArray[ind];
+    this.setState({ isModalVisible: !this.state.isModalVisible 
+    });
+    // Alert.alert(
+    //   'New Note',
+    //   'Add details',
+    //   [
+    //     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+    //     {text: 'OK', onPress: () => console.log('OK Pressed')},
+    //   ],
+    //   { cancelable: false }
+    // )
+    
   }
 
 }
+
+// uuid Generatory
+const uuidGenerator = function* () {
+  while (true) {
+      let time = new Date().getTime()
+      let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (char) {
+          const random = (time + Math.random() * 16) % 16 | 0
+          return (char === 'x' ? random : (random & 0x3 | 0x8)).toString(16)
+      })
+      yield uuid
+  }
+}
+// Create instance of generator
+const noteId = uuidGenerator();
 
 const styles = StyleSheet.create({
   container: {

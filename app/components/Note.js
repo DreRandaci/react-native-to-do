@@ -6,18 +6,21 @@ import {
   TouchableOpacity,
   Touchable
  } from 'react-native';
-import NoteModal from './NoteModal';
+ import Modal from "react-native-modal";
 
 export default class Note extends React.Component {
+    
   render() {
     return (
 
       <View key={this.props.keyVal} style={styles.note}>
       
         <TouchableOpacity onPress={this.props.updateMethod} style={styles.noteWrapper}>
-        {/* <NoteModal /> */}
-            <Text style={styles.noteText}>{this.props.val.note}</Text>
-            <Text style={styles.noteText}>{this.props.val.date}</Text>
+            <View>
+                <Text style={styles.noteText}>{this.props.val.note}</Text>
+                <Text style={styles.noteText}>{this.props.val.date}</Text>
+            </View>
+            
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.props.deleteMethod} style={styles.noteDelete}>
