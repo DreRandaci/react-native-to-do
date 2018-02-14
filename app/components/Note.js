@@ -15,7 +15,7 @@ export default class Note extends React.Component {
       <View key={this.props.keyVal} style={styles.note}>
       
         <TouchableOpacity onPress={this.props.updateMethod} style={styles.noteWrapper}>
-        <NoteModal />
+        {/* <NoteModal /> */}
             <Text style={styles.noteText}>{this.props.val.note}</Text>
             <Text style={styles.noteText}>{this.props.val.date}</Text>
         </TouchableOpacity>

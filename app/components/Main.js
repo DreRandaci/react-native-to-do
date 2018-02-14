@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { 
+  Alert,
   StyleSheet,
   Text,
   View,
@@ -23,7 +24,13 @@ export default class Main extends React.Component {
   render() {
 
     let notes = this.state.noteArray.map((val, key) => {
-      return <Note key={key} keyVal={key} val={val} updateMethod={() => this.updateNote(key)} deleteMethod={() => this.deleteNote(key)} />
+      return (
+      <Note 
+        key={key} 
+        keyVal={key} 
+        val={val} 
+        updateMethod={() => this.updateNote(key)} 
+        deleteMethod={() => this.deleteNote(key)} />)
     })
 
     return (
@@ -56,7 +63,7 @@ export default class Main extends React.Component {
   }
 
   addNote() {
-
+    
     if (this.state.noteText) {
       var date = new Date();
       this.state.noteArray.push({
@@ -75,6 +82,16 @@ export default class Main extends React.Component {
   }
 
   updateNote(ind) {
+    Alert.alert(
+      'New Note',
+      'Add details',
+      [
+        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ],
+      { cancelable: false }
+    )
     // <NoteModal visible={true}/>
     let note = this.state.noteArray[ind];
   }
