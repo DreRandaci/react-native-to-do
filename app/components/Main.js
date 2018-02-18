@@ -9,7 +9,10 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Note from './Note';
-import Modal from "react-native-modal";
+import Modal from 'react-native-modal';
+import CreateNoteObj from '../utils/createNoteObj';
+import UuidCreate from '../utils/uuidCreate';
+import PersistData from '../utils/persistData';
 
 export default class Main extends React.Component {
 
@@ -23,17 +26,28 @@ export default class Main extends React.Component {
     }
   }
 
+  componentWillMount() {
+    // Request existing notes
+    AsyncStorage.getItem('notes').then((res) => {
+      console.log("AsyncStorage 'get' response:", JSON.parse(res));
+      // If there are notes, update the state
+      if (res !== null) {
+        this.setState.noteArray = JSON.parse(res);
+      } 
+    });
+  }
+
   render() {
 
     let notes = this.state.noteArray.map((val, key) => {
       return (
-      <Note 
-        key={key} 
-        keyVal={key} 
-        val={val} 
-        updateMethod={() => this.updateNote(key)} 
-        deleteMethod={() => this.deleteNote(key)} />)
-    })
+        <Note 
+          key={key} 
+          keyVal={key} 
+          val={val} 
+          updateMethod={() => this.updateNote(key)} 
+          deleteMethod={() => this.deleteNote(key)} />)
+    });
 
     return (
       <View style={styles.container}>
@@ -45,7 +59,7 @@ export default class Main extends React.Component {
         {notes}
         </ScrollView>
         
-        <Modal isVisible={this.state.isModalVisible}>
+        {/* <Modal isVisible={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
             <TouchableOpacity 
               onPress={this.updateNote} 
@@ -53,8 +67,7 @@ export default class Main extends React.Component {
               <Text>Hide me!</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
-
+        </Modal> */}
 
         <View style={styles.footer}>
             <TextInput 
@@ -78,19 +91,19 @@ export default class Main extends React.Component {
   displayNoteAndSendToSaveNoteFunction() {
     if (this.state.noteText) {
 
-      // Create instance of generator for unique key storage
-      let noteId = uuidCreator();
+      // Create a unique note id
+      let noteId = UuidCreate.getNewUuid();
 
       // Create a note object with the text and a new date instance
-      let note = createNoteObj(noteId, this.state.noteText);
-
+      let note = CreateNoteObj.getNoteObj(noteId, this.state.noteText);
+      
       // Push the note into the state noteArray to render to scrollView component
       this.state.noteArray.push(note);
 
       // Save the note to local storage
-      // saveNoteToLocalStorage(note, noteId);
+      PersistData.saveToLocalStorage(this.state.noteArray);
 
-      // Update the state of the noteArray and empty the create note textinput 
+      // Update the state of the noteArray and empty the note textinput 
       this.setState({noteArray: this.state.noteArray});
       this.setState({noteText: ''});
     }
@@ -109,36 +122,6 @@ export default class Main extends React.Component {
     });
     
   }
-}
-
-async function saveNoteToLocalStorage(note, noteId) {
-  try {
-    await AsyncStorage.setItem(noteId, JSON.stringify(note))
-      .then((res) => 
-        console.log("successful response:", res));
-  } catch (err) {
-    // err saving data
-    console.log("err in saveNoteToLoaclStorage:", err);
-  }
-}
-
-const createNoteObj = (id, noteTxt) => {
-    // Create the note object
-    var date = new Date();
-    let note = {
-      'id': id,
-      'date': (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), 
-      'note': noteTxt
-    }
-    return note;
-}
-
-// Creates a unique ID
-const uuidCreator = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
 }
 
 const styles = StyleSheet.create({
