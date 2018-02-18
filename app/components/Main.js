@@ -32,7 +32,7 @@ export default class Main extends React.Component {
       console.log("AsyncStorage 'get' response:", JSON.parse(res));
       // If there are notes, update the state
       if (res !== null) {
-        this.setState.noteArray = JSON.parse(res);
+        this.setState({noteArray: JSON.parse(res)});
       } 
     });
   }
