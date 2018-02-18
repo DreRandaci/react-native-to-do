@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { 
-  Alert,
+  AsyncStorage,
   StyleSheet,
   Text,
   View,
@@ -18,6 +18,7 @@ export default class Main extends React.Component {
     this.state = {
       isModalVisible: false,
       noteArray: [],
+      selectedNote: '',
       noteText: ''
     }
   }
@@ -44,22 +45,15 @@ export default class Main extends React.Component {
         {notes}
         </ScrollView>
         
-
-
-
-        // WORKING HERE 
         <Modal isVisible={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
-            <Text>MODAL!!!!</Text>
-            <TouchableOpacity onPress={this.updateNote}>
+            <TouchableOpacity 
+              onPress={this.updateNote} 
+              style={styles.modalOpen}>
               <Text>Hide me!</Text>
             </TouchableOpacity>
           </View>
         </Modal>
-
-
-
-
 
 
         <View style={styles.footer}>
@@ -73,7 +67,7 @@ export default class Main extends React.Component {
             </TextInput>
         </View>
       
-        <TouchableOpacity onPress={this.addNote.bind(this)} style={styles.addButton}>
+        <TouchableOpacity onPress={this.displayNoteAndSendToSaveNoteFunction.bind(this)} style={styles.addButton}>
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
 
@@ -81,15 +75,22 @@ export default class Main extends React.Component {
     );
   }
 
-  addNote() {
-    
+  displayNoteAndSendToSaveNoteFunction() {
     if (this.state.noteText) {
-      var date = new Date();
-      this.state.noteArray.push({
-        'date': (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), 
-        'note': this.state.noteText
-      });
-      
+
+      // Create instance of generator for unique key storage
+      let noteId = uuidCreator();
+
+      // Create a note object with the text and a new date instance
+      let note = createNoteObj(noteId, this.state.noteText);
+
+      // Push the note into the state noteArray to render to scrollView component
+      this.state.noteArray.push(note);
+
+      // Save the note to local storage
+      // saveNoteToLocalStorage(note, noteId);
+
+      // Update the state of the noteArray and empty the create note textinput 
       this.setState({noteArray: this.state.noteArray});
       this.setState({noteText: ''});
     }
@@ -101,36 +102,44 @@ export default class Main extends React.Component {
   }
 
   updateNote(ind) {
-    let note = this.state.noteArray[ind];
-    this.setState({ isModalVisible: !this.state.isModalVisible 
+    console.log(this.state.noteArray[ind]);
+    this.setState({ 
+      // isModalVisible: !this.state.isModalVisible,
+      selectedNote: this.state.noteArray[ind]
     });
-    // Alert.alert(
-    //   'New Note',
-    //   'Add details',
-    //   [
-    //     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-    //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-    //   ],
-    //   { cancelable: false }
-    // )
     
   }
-
 }
 
-// uuid Generatory
-const uuidGenerator = function* () {
-  while (true) {
-      let time = new Date().getTime()
-      let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (char) {
-          const random = (time + Math.random() * 16) % 16 | 0
-          return (char === 'x' ? random : (random & 0x3 | 0x8)).toString(16)
-      })
-      yield uuid
+async function saveNoteToLocalStorage(note, noteId) {
+  try {
+    await AsyncStorage.setItem(noteId, JSON.stringify(note))
+      .then((res) => 
+        console.log("successful response:", res));
+  } catch (err) {
+    // err saving data
+    console.log("err in saveNoteToLoaclStorage:", err);
   }
 }
-// Create instance of generator
-const noteId = uuidGenerator();
+
+const createNoteObj = (id, noteTxt) => {
+    // Create the note object
+    var date = new Date();
+    let note = {
+      'id': id,
+      'date': (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), 
+      'note': noteTxt
+    }
+    return note;
+}
+
+// Creates a unique ID
+const uuidCreator = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -184,5 +193,8 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: 'white',
     fontSize: 24
+  },
+  modalOpen: {
+    backgroundColor: 'pink'
   }
 })
