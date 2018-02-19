@@ -12,7 +12,9 @@ import Note from './Note';
 import Modal from 'react-native-modal';
 import CreateNoteObj from '../utils/createNoteObj';
 import UuidCreate from '../utils/uuidCreate';
-import PersistData from '../utils/persistData';
+import SaveNote from '../utils/saveNote';
+import DeleteNote from '../utils/deleteNote';
+import mainStyles from '../styles/mainView';
 
 export default class Main extends React.Component {
 
@@ -29,7 +31,6 @@ export default class Main extends React.Component {
   componentWillMount() {
     // Request existing notes
     AsyncStorage.getItem('notes').then((res) => {
-      console.log("AsyncStorage 'get' response:", JSON.parse(res));
       // If there are notes, update the state
       if (res !== null) {
         this.setState({noteArray: JSON.parse(res)});
@@ -50,28 +51,28 @@ export default class Main extends React.Component {
     });
 
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-            <Text style={styles.headerText}>- TO DO -</Text>
+      <View style={mainStyles.container}>
+        <View style={mainStyles.header}>
+            <Text style={mainStyles.headerText}>- TO DO -</Text>
         </View>
         
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView style={mainStyles.scrollContainer}>
         {notes}
         </ScrollView>
         
-        {/* <Modal isVisible={this.state.isModalVisible}>
+        <Modal isVisible={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
             <TouchableOpacity 
               onPress={this.updateNote} 
-              style={styles.modalOpen}>
+              style={mainStyles.modalOpen}>
               <Text>Hide me!</Text>
             </TouchableOpacity>
           </View>
-        </Modal> */}
+        </Modal>
 
-        <View style={styles.footer}>
+        <View style={mainStyles.footer}>
             <TextInput 
-            style={styles.textInput} 
+            style={mainStyles.textInput} 
             onChangeText={(noteText) => this.setState({noteText})}
             value={this.state.noteText}
             placeholder='>Note' 
@@ -80,8 +81,8 @@ export default class Main extends React.Component {
             </TextInput>
         </View>
       
-        <TouchableOpacity onPress={this.displayNoteAndSendToSaveNoteFunction.bind(this)} style={styles.addButton}>
-          <Text style={styles.addButtonText}>+</Text>
+        <TouchableOpacity onPress={this.displayNoteAndSendToSaveNoteFunction.bind(this)} style={mainStyles.addButton}>
+          <Text style={mainStyles.addButtonText}>+</Text>
         </TouchableOpacity>
 
       </View>
@@ -101,7 +102,7 @@ export default class Main extends React.Component {
       this.state.noteArray.push(note);
 
       // Save the note to local storage
-      PersistData.saveToLocalStorage(this.state.noteArray);
+      SaveNote.saveNoteToLocalStorage(this.state.noteArray);
 
       // Update the state of the noteArray and empty the note textinput 
       this.setState({noteArray: this.state.noteArray});
@@ -110,74 +111,19 @@ export default class Main extends React.Component {
   }
 
   deleteNote(ind) {
-    this.state.noteArray.splice(ind, 1);
-    this.setState({noteArray: this.state.noteArray});
+    console.log(this.state.noteArray[ind]);
+    let updatedNoteArray = DeleteNote.deleteNoteFromLocalStorage(this.state.noteArray[ind].id);
+    console.log(updatedNoteArray);
+    // this.setState({noteArray: });
+    // this.state.noteArray.splice(ind, 1);
+    // this.setState({noteArray: this.state.noteArray});
   }
 
   updateNote(ind) {
     console.log(this.state.noteArray[ind]);
     this.setState({ 
-      // isModalVisible: !this.state.isModalVisible,
+      isModalVisible: !this.state.isModalVisible,
       selectedNote: this.state.noteArray[ind]
     });
-    
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-      backgroundColor: '#44b3ce',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderBottomWidth: 10,
-      borderBottomColor: '#ddd'
-  },
-  headerText: {
-      color: 'white',
-      fontSize: 18,
-      padding: 26,
-      fontWeight: 'bold',
-  },
-  scrollContainer: {
-    flex: 1,
-    marginBottom: 100
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10
-  },
-  textInput: {
-    alignSelf: 'stretch',
-    color: '#fff',
-    padding: 20,
-    backgroundColor: '#252525',
-    borderTopWidth: 2,
-    borderTopColor: '#ededed'
-  },
-  addButton: {
-    position: 'absolute',
-    zIndex: 11,
-    right: 20,
-    bottom: 90,
-    backgroundColor: '#44b3ce',
-    width: 90,
-    height: 90,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 24
-  },
-  modalOpen: {
-    backgroundColor: 'pink'
-  }
-})

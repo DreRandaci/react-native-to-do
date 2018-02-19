@@ -7,24 +7,25 @@ import {
   Touchable
  } from 'react-native';
  import Modal from "react-native-modal";
+ import NoteStyles from '../styles/noteStyles';
 
 export default class Note extends React.Component {
     
   render() {
     return (
 
-      <View key={this.props.keyVal} style={styles.note}>
+      <View key={this.props.keyVal} style={NoteStyles.note}>
       
-        <TouchableOpacity onPress={this.props.updateMethod} style={styles.noteWrapper}>
+        <TouchableOpacity onPress={this.props.updateMethod} style={NoteStyles.noteWrapper}>
             <View>
-                <Text style={styles.noteText}>{this.props.val.note}</Text>
-                <Text style={styles.noteText}>{this.props.val.date}</Text>
+                <Text style={NoteStyles.noteText}>{this.props.val.note}</Text>
+                <Text style={NoteStyles.noteText}>{this.props.val.date}</Text>
             </View>
             
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.props.deleteMethod} style={styles.noteDelete}>
-            <Text style={styles.noteDeleteText}>D</Text>
+        <TouchableOpacity onPress={this.props.deleteMethod} style={NoteStyles.noteDelete}>
+            <Text style={NoteStyles.noteDeleteText}>D</Text>
         </TouchableOpacity>
 
       </View>
@@ -32,32 +33,3 @@ export default class Note extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-    note: {
-        position: 'relative',
-        padding: 20,
-        paddingRight: 100,
-        borderBottomWidth: 2,
-        borderBottomColor: '#ededed'
-    },
-    noteText: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#e91e63'
-    },
-    noteDelete: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ff0000',
-        padding: 10,
-        top: 10,
-        bottom: 10,
-        right: 10
-    },
-    noteDeleteText: {
-        color: 'white'
-    }
-});
-
