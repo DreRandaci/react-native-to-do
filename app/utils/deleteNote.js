@@ -6,9 +6,10 @@ const deleteNote = {
             // AsyncStorage.clear();
             const notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
-            let newNoteArr = notes.splice(notes.findIndex(n => n.id === noteId), 1);
-            AsyncStorage.setItem('notes', JSON.stringify(newNoteArr));
-            return newNoteArr;
+            AsyncStorage.setItem('notes', JSON.stringify(notes.splice(notes.filter(n => n.id === noteId), 1)));
+            
+            // Returns a promise so a .then() can be used in the delete function to setState
+            return notes;
         } catch (err) {
             Alert.alert("Something went wrong deleting your note. Please try reloading the application if the issue continues");
             console.log("error in deleteNoteFromLocalStorage:", err);

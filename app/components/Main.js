@@ -42,12 +42,13 @@ export default class Main extends React.Component {
 
     let notes = this.state.noteArray.map((val, key) => {
       return (
-        <Note 
+        <Note
           key={key} 
+          id={val.id} 
           keyVal={key} 
           val={val} 
-          updateMethod={() => this.updateNote(key)} 
-          deleteMethod={() => this.deleteNote(key)} />)
+          updateMethod={() => this.updateNote(val.id)} 
+          deleteMethod={() => this.deleteNote(val.id)} />)
     });
 
     return (
@@ -98,25 +99,25 @@ export default class Main extends React.Component {
       // Create a note object with the text and a new date instance
       let note = CreateNoteObj.getNoteObj(noteId, this.state.noteText);
       
-      // Push the note into the state noteArray to render to scrollView component
+      // Push the note into the state noteArray 
       this.state.noteArray.push(note);
 
       // Save the note to local storage
-      SaveNote.saveNoteToLocalStorage(this.state.noteArray);
-
-      // Update the state of the noteArray and empty the note textinput 
-      this.setState({noteArray: this.state.noteArray});
-      this.setState({noteText: ''});
+      SaveNote.saveNoteToLocalStorage(this.state.noteArray)
+        .then(() => {
+          AsyncStorage.getItem('notes')
+          .then((res) => {
+            // Update the state of the noteArray and empty the note textinput 
+            this.setState({noteArray: JSON.parse(res)});
+            this.setState({noteText: ''});            
+          })
+        })
     }
   }
 
-  deleteNote(ind) {
-    console.log(this.state.noteArray[ind]);
-    let updatedNoteArray = DeleteNote.deleteNoteFromLocalStorage(this.state.noteArray[ind].id);
-    console.log(updatedNoteArray);
-    // this.setState({noteArray: });
-    // this.state.noteArray.splice(ind, 1);
-    // this.setState({noteArray: this.state.noteArray});
+  deleteNote(id) {
+    DeleteNote.deleteNoteFromLocalStorage(id)
+      .then((res) => this.setState({noteArray: res}));
   }
 
   updateNote(ind) {
