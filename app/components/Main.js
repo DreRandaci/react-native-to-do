@@ -23,7 +23,7 @@ export default class Main extends React.Component {
     this.state = {
       isModalVisible: false,
       noteArray: [],
-      selectedNote: '',
+      selectedNote: [],
       noteText: ''
     }
   }
@@ -47,7 +47,7 @@ export default class Main extends React.Component {
           id={val.id} 
           keyVal={key} 
           val={val} 
-          updateMethod={() => this.updateNote(val.id)} 
+          updateMethod={() => this.updateNote(key)} 
           deleteMethod={() => this.deleteNote(val.id)} />)
     });
 
@@ -115,16 +115,17 @@ export default class Main extends React.Component {
     }
   }
 
-  deleteNote(id) {
-    DeleteNote.deleteNoteFromLocalStorage(id)
-      .then((res) => this.setState({noteArray: res}));
+  async deleteNote(id) {
+    // AsyncStorage.clear();
+    let res = await DeleteNote.deleteNoteFromLocalStorage(id);
+    this.setState({noteArray: JSON.parse(res)});
   }
 
   updateNote(ind) {
     console.log(this.state.noteArray[ind]);
-    this.setState({ 
-      isModalVisible: !this.state.isModalVisible,
-      selectedNote: this.state.noteArray[ind]
-    });
-  }
+    // this.setState({ 
+    //   isModalVisible: !this.state.isModalVisible,
+    //   selectedNote: this.state.noteArray[ind]
+    // });
+  }  
 }
