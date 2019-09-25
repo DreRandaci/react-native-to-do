@@ -5,20 +5,28 @@
     "version": "0.2.0",
     "configurations": [
 
-    // {
-    //     "name": "Debug iOS",
-    //     "program": "${workspaceRoot}/.vscode/launchReactNative.js",
-    //     "type": "reactnative",
-    //     "request": "launch",
-    //     "platform": "ios",
-    //     "sourceMaps": true,
-    //     "outDir": "${workspaceRoot}/.vscode/.react"
-    // },
-    //     {
-    //         "type": "node",
-    //         "request": "launch",
-    //         "name": "Launch Program",
-    //         "program": "${workspaceFolder}/start"
-    //     }
+    {
+        "name": "Debug iOS",
+        "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+        "type": "reactnative",
+        "request": "launch",
+        "platform": "ios",
+        "sourceMaps": true,
+        "outDir": "${workspaceRoot}/.vscode/.react"
+    },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/start"
+        },
+        {
+            "name": "Attach to packager",
+            "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+            "type": "reactnative",
+            "request": "attach",
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/.vscode/.react" 
+        }
     ]
 }
